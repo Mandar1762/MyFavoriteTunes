@@ -1,0 +1,138 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Song List</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+     <nav>
+         <h1>My Favourite Tunes</h1>
+               <div class="head" id="addSongForm" style="display:none;">
+                     <form class="head" method="post" action="{% url 'add_song' %}">
+                       {% csrf_token %}
+                       <div>{{ artist_form.as_p }}</div>
+                       <div>{{ song_form.as_p }}</div>
+                       <button type="submit">Add Song</button>
+                     </form>
+               </div>
+               <button type="button" class="btn btn-primary" id="openModalBtn">Add your Favourite Song</button>
+                <div id="myModal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <span class="close" id="closeModalBtn">&times;</span>
+                        </div>
+                        <div class="modal-body">
+                             <form method="post" action="{% url 'add_song' %}">
+                                  {% csrf_token %}
+                                  <label for="title">Song Title:</label>
+                                  <input type="text" name="title" required><br>
+                                  <label for="artist">Artist:</label>
+                                  <input type="text" name="artist" required><br>
+                                  <button type="submit">Add Song</button>
+                             </form>
+                        </div>
+                    </div>
+                </div>
+    </nav>
+    <table>
+        <thead>
+            <tr>
+                <th class="header" onclick="sortTable('title')" id="titleHeader" style="cursor: pointer">Title</th>
+                <th class="header" onclick="sortTable('artist')" id="artistHeader" style="cursor: pointer">Artist</th>
+                <th class="header">Added On</th>
+                <th class="header">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for song in songs %}
+                <tr>
+                    <td><img class="music-icon" src="/static/musical-icon.png" alt="Music Icon"> {{ song.title }}</td>
+                    <td>{{ song.artist }}</td>
+                    <td>10 Jan 2024</td>
+                    <td>
+                        <form style="display: none" id="delete_song_{{ song.id }}" method="post" action="{% url 'delete_song' song.id %}">
+                            {% csrf_token %}
+                        </form>
+                        <button type="button" class="delete-btn" onclick="delete_song('delete_song_{{ song.id }}')">Delete</button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+
+ <script>
+        var modal = document.getElementById('myModal');
+        var openBtn = document.getElementById('openModalBtn');
+        var closeBtn = document.getElementById('closeModalBtn');
+        var form = document.getElementById('songForm');
+
+        openBtn.onclick = function() {
+            modal.style.display = 'flex';
+        };
+
+        closeBtn.onclick = function() {
+            modal.style.display = 'none';
+        };
+
+        window.onclick = function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        };
+
+
+function sortTable(parameter) {
+        var table, rows, switching, i, x, y, shouldSwitch, dir, switchCount = 0;
+        table = document.querySelector('table');
+        switching = true;
+        // Set the sorting direction to ascending
+        dir = 'asc';
+
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+
+            for (i = 1; i < rows.length - 1; i++) {
+                shouldSwitch = false;
+                x = rows[i].getElementsByTagName('td')[parameter === 'title' ? 0 : 1];
+                y = rows[i + 1].getElementsByTagName('td')[parameter === 'title' ? 0 : 1];
+
+                if (dir === 'asc') {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                } else if (dir === 'desc') {
+                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+                switchCount++;
+            } else {
+                if (switchCount === 0 && dir === 'asc') {
+                    dir = 'desc';
+                    switching = true;
+                }
+            }
+        }
+
+        // Add arrow indicators with different colors
+    const titleArrow = (parameter === 'title' && dir === 'asc') ? '<span style="color: green;"> ▲</span>' : '<span style="color: darkred;">▼</span>';
+    const artistArrow = (parameter === 'artist' && dir === 'asc') ? '<span style="color: green;"> ▲</span>' : '<span style="color: darkred;">▼</span>';
+
+    document.getElementById('titleHeader').innerHTML = 'Title ' + (parameter === 'title' ? titleArrow : '');
+        document.getElementById('artistHeader').innerHTML = 'Artist ' + (parameter === 'artist' ? artistArrow : '');
+    }
+
+    </script>
+
+</html>
