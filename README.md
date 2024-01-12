@@ -33,9 +33,13 @@ TuneTracker is a web application that allows users to keep track of their favori
    python manage.py runserver
 ```
 ## Features
+
 Add your favorite songs with details such as title and artist.
+
 View a list of your favorite tunes.
+
 Delete songs from your list.
+
 Sort the song list by title or artist.
 
 
