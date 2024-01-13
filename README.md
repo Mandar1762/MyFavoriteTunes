@@ -5,7 +5,6 @@ TuneTracker is a web application that allows users to keep track of their favori
 
 ## Table of Contents
 - [Installation](#installation)
-- [Usage](#usage)
 - [Features](#features)
 
 ## Installation
